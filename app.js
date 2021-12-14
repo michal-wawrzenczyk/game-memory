@@ -17,7 +17,38 @@ const memoryGame = {
         "images/element8.png",
         "images/element9.png",
         "images/element10.png"
-    ]
+    ],
+    canGet : true, // to prevent clicking on other tiles while deleting or resetting function works
+
+    tileClick(e) {
+        if (this.canGet) {
+            // if we have not already chosen an item yet
+            // or index of the element does not already exist in the tilesChecked array...
+            // so here we check if chosen tile is not already clicked (i.e. if it has been already thrown into tilesChecked array)
+            // then we can add this element to the array and set the background basing on dataset of the element.
+            if (!this.tilesChecked[0] || (this.tilesChecked[0].dataset.index !== e.target.dataset.index)) {
+                this.tilesChecked.push(e.target);
+                e.target.style.backgroundImage = `url(${this.tilesImg[e.target.dataset.cardType]})`;
+            }
+            // the tilesChecked array can contain only 2 elements
+            if (this.tilesChecked.length === 2) {
+                // we cannot click on another tile while delete or reset function is running.
+                this.canGet = false;
+                // second tile must be chosen. Now if cardType of both elements in tilesChecked array is the same, then the pair of tiles has been matched.
+                if (this.tilesChecked[0].dataset.cardType === this.tilesChecked[1].dataset.cardType) {
+                    // if the pair has been matched, execute the deleteTiles function to get rid of them.
+                    setTimeout(this.deleteTiles.bind(this), 500);
+                    // or: setTimeout(() => this.deleteTiles(), 500);
+                } else {
+                    // if the tiles are different, hide them again by execute the resetTiles method. Hide them with 500ms time delay.
+                    setTimeout(this.resetTiles.bind(this), 500);
+                    // or: setTimeout(() => this.resetTiles(), 500);
+                }
+                this.moveCount++;
+                this.divScore.innerText = this.moveCount;
+            }
+        }
+    },
 
     startGame() {
         // clean the game board
