@@ -19,6 +19,7 @@ const memoryGame = {
         "images/element10.png"
     ],
     canGet : true, // to prevent clicking on other tiles while deleting or resetting function works
+    tilePairs : 0, // number of matched tiles. If the number is >= tileCount/2, then the game is over. Must be checked in deleteTiles() function.
 
     tileClick(e) {
         if (this.canGet) {
@@ -65,6 +66,12 @@ const memoryGame = {
         // reset tilesChecked array after deleting element
         this.canGet = true;
         this.tilesChecked = [];
+
+        this.tilePairs++;
+        // game is over, when tilePairs is >= tileCount/2 - tilePairs must be also reset in startGame
+        if (this.tilePairs >= this.tileCount / 2) {
+            window.location.href = "https://thumbs.gfycat.com/CarefreeFlamboyantJackal-size_restricted.gif";
+        }
     },
 
     resetTiles() {
@@ -88,9 +95,11 @@ const memoryGame = {
         this.tiles = [];
         this.tilesChecked = [];
         this.moveCount = 0;
+        this.canGet = true;
+        this.tilePairs = 0;
 
         // generate an array of tile numbers (in pairs)
-        for (let i=0; i<tileCount; i++) {
+        for (let i=0; i<this.tileCount; i++) {
             this.tiles.push(Math.floor(i/2));
         }
 
@@ -116,3 +125,9 @@ const memoryGame = {
         }
     }
 }
+
+// apply startGame to .game-start button
+document.addEventListener("DOMContentLoaded", () => {
+    const startBtn = document.querySelector(".game-start");
+    startBtn.addEventListener("click", e => memoryGame.startGame());
+});
