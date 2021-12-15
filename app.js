@@ -36,7 +36,7 @@ const memoryGame = {
                 this.canGet = false;
                 // second tile must be chosen. Now if cardType of both elements in tilesChecked array is the same, then the pair of tiles has been matched.
                 if (this.tilesChecked[0].dataset.cardType === this.tilesChecked[1].dataset.cardType) {
-                    // if the pair has been matched, execute the deleteTiles function to get rid of them.
+                    // if the pair has been matched, execute the deleteTiles function to get rid of them. The tiles will be stored in tilesChecked and can be deleted with help of remove() method in deleteTiles() function.
                     setTimeout(this.deleteTiles.bind(this), 500);
                     // or: setTimeout(() => this.deleteTiles(), 500);
                 } else {
@@ -44,10 +44,35 @@ const memoryGame = {
                     setTimeout(this.resetTiles.bind(this), 500);
                     // or: setTimeout(() => this.resetTiles(), 500);
                 }
+
+                // anytime we click a tile, we increment the moveCount variable by 1
                 this.moveCount++;
+                // to write the result in the divScore element
                 this.divScore.innerText = this.moveCount;
             }
         }
+    },
+
+    // to remove matched tiles from tilesChecked array.
+    deleteTiles() {
+        this.tilesChecked.forEach(el => {
+            // when tile is removed, all tiles will move one space (this is how the grid works). To prevent such situation, a new empty div must replace deleted tile.
+            const emptyDiv = document.createElement("div");
+            el.after(emptyDiv);
+            el.remove();
+        });
+
+        // reset tilesChecked array after deleting element
+        this.canGet = true;
+        this.tilesChecked = [];
+    },
+
+    resetTiles() {
+        // each of two chosen tiles which are not matched return to the initial state
+        this.tilesChecked.forEach(el => el.style.backgroundImage = "");
+        // reset tilesChecked array and canGet variable
+        this.tilesChecked = [];
+        this.canGet = true;
     },
 
     startGame() {
